@@ -1,10 +1,15 @@
 from kivy.app import App
+from kivy.lang import Builder
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
+import os
+
+# kv_path = os.path.join(os.path.dirname(__file__), "../tameplate/main.kv")
+# Builder.load_file(kv_path)
 
 
 class GameWidget(Widget):
@@ -22,12 +27,13 @@ class GameWidget(Widget):
         Clock.schedule_interval(self.on_point, 0)
 
         self.combo = 0
+        self.game_active = True
         self.game_over_label = Label(
-            text="GAME OVER",
+            text="",
             font_size="50sp",
             pos_hint={"center_x": 0.5, "center_y": 0.5},
             size_hint=(None, None),
-            size=(300, 100),
+            size=(0, 0),
             color=(1, 0, 0, 1),
         )
         self.add_widget(self.game_over_label)
@@ -53,9 +59,6 @@ class GameWidget(Widget):
             self.pressed_keys.remove(text)
 
     def is_mouse_inside_object(self, mouse_pos, obj):
-        """
-        Check if the mouse is inside the object's area.
-        """
         x, y = mouse_pos
         obj_x, obj_y = obj.pos
         obj_width, obj_height = obj.size
@@ -63,6 +66,9 @@ class GameWidget(Widget):
         return obj_x <= x <= obj_x + obj_width and obj_y <= y <= obj_y + obj_height
 
     def on_point(self, dt):
+        if not self.game_active:
+            return
+
         if "s" in self.pressed_keys:
             if self.is_mouse_inside_object(self._mouse, self.hero):
                 print("s onclick!!!!!!!!!!")
