@@ -13,6 +13,8 @@ Builder.load_file(kv_path)
 
 
 class GameWidget(Widget):
+    obj_pos = [250, 100]
+    obj_size = [100, 100]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -46,9 +48,9 @@ class GameWidget(Widget):
 
     def is_mouse_inside_object(self, mouse_pos, obj):
         x, y = mouse_pos
-        obj_x, obj_y = obj.pos
+        obj_x, obj_y = obj[0]
         print(obj_x, obj_y)
-        obj_width, obj_height = obj.size
+        obj_width, obj_height = obj[1]
         print(obj_width, obj_height)
 
         return obj_x <= x <= obj_x + obj_width and obj_y <= y <= obj_y + obj_height
@@ -57,12 +59,11 @@ class GameWidget(Widget):
         if not self.game_active:
             return
 
-        obj = self.ids.obj
-        print(obj.size)
-        print(f"Mouse position on point: {self._mouse}")
+        obj_pos = self.obj_pos
+        obj_size = self.obj_size
 
         if "s" in self.pressed_keys:
-            if self.is_mouse_inside_object(self._mouse, obj):
+            if self.is_mouse_inside_object(self._mouse, (obj_pos, obj_size)):
                 print("s onclick!!!!!!!!!!")
                 self.combo += 1
             else:
@@ -70,7 +71,7 @@ class GameWidget(Widget):
                 self.end_game()
 
         if "d" in self.pressed_keys:
-            if self.is_mouse_inside_object(self._mouse, obj):
+            if self.is_mouse_inside_object(self._mouse, (obj_pos, obj_size)):
                 self.combo += 1
                 print("d onclick!!!!!!!!!!")
             else:
