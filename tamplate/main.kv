@@ -1,0 +1,19 @@
+<GameWidget>:
+    game_active: True
+
+    canvas:
+        Rectangle:
+            id: obj
+            pos: 250, 250
+            size: 100, 100
+
+    Label:
+        id: game_over_label
+        text: "GAME OVER"
+        font_size: "50sp"
+        size_hint: None, None
+        size: 300, 100
+        color: 1, 0, 0, 1
+        center_x: root.width / 2
+        center_y: root.height / 2
+        opacity: 0

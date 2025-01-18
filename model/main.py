@@ -8,8 +8,8 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 import os
 
-# kv_path = os.path.join(os.path.dirname(__file__), "../tameplate/main.kv")
-# Builder.load_file(kv_path)
+kv_path = os.path.join(os.path.dirname(__file__), "../tamplate/main.kv")
+Builder.load_file(kv_path)
 
 
 class GameWidget(Widget):
@@ -21,26 +21,12 @@ class GameWidget(Widget):
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
 
-        Window.bind(mouse_pos=self._on_mouse_move)
-        self._mouse = (0, 0)
+        self._mouse = Window.bind(mouse_pos=self._on_mouse_move)
         self.pressed_keys = set()
         Clock.schedule_interval(self.on_point, 0)
 
         self.combo = 0
         self.game_active = True
-        self.game_over_label = Label(
-            text="",
-            font_size="50sp",
-            pos_hint={"center_x": 0.5, "center_y": 0.5},
-            size_hint=(None, None),
-            size=(0, 0),
-            color=(1, 0, 0, 1),
-        )
-        self.add_widget(self.game_over_label)
-
-        with self.canvas:
-            self.hero = Rectangle(source="hero.png", pos=(250, 250), size=(100, 100))
-
         Clock.schedule_interval(self.on_point, 0)
 
     def _on_keyboard_closed(self):
@@ -61,7 +47,9 @@ class GameWidget(Widget):
     def is_mouse_inside_object(self, mouse_pos, obj):
         x, y = mouse_pos
         obj_x, obj_y = obj.pos
+        print(obj_x, obj_y)
         obj_width, obj_height = obj.size
+        print(obj_width, obj_height)
 
         return obj_x <= x <= obj_x + obj_width and obj_y <= y <= obj_y + obj_height
 
@@ -69,8 +57,12 @@ class GameWidget(Widget):
         if not self.game_active:
             return
 
+        obj = self.ids.obj
+        print(obj.size)
+        print(f"Mouse position on point: {self._mouse}")
+
         if "s" in self.pressed_keys:
-            if self.is_mouse_inside_object(self._mouse, self.hero):
+            if self.is_mouse_inside_object(self._mouse, obj):
                 print("s onclick!!!!!!!!!!")
                 self.combo += 1
             else:
@@ -78,7 +70,7 @@ class GameWidget(Widget):
                 self.end_game()
 
         if "d" in self.pressed_keys:
-            if self.is_mouse_inside_object(self._mouse, self.hero):
+            if self.is_mouse_inside_object(self._mouse, obj):
                 self.combo += 1
                 print("d onclick!!!!!!!!!!")
             else:
@@ -103,14 +95,8 @@ class GameWidget(Widget):
 
     def end_game(self):
         self.game_active = False
-        self.game_over_label.text = f"GAME OVER\nCombo: {self.combo}"
-        self.game_over_label.pos = (
-            self.width / 2 - self.game_over_label.width / 2,
-            self.height / 2 - self.game_over_label.height / 2,
-        )
-        self.game_over_label.opacity = 1
-
-        print("Game over! Final combo:", self.combo)
+        self.ids.game_over_label.text = f"GAME OVER\nCombo: {self.combo}"
+        self.ids.game_over_label.opacity = 1
 
 
 class MyApp(App):
