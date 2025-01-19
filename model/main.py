@@ -15,8 +15,8 @@ Builder.load_file(kv_path)
 
 class GameWidget(Widget):
     count = 0
-    obj_pos = [250, 250]
-    sizes = [[100, 100], [80, 80], [70, 70]]
+    obj_pos = ListProperty([250, 250])
+    sizes = [[100, 100], [95, 95], [98, 98], [88, 88], [80, 80], [85, 85]]
     obj_size = ListProperty(sizes[count])
 
     def __init__(self, **kwargs):
@@ -30,7 +30,7 @@ class GameWidget(Widget):
         self.combo = 0
         self.game_active = True
 
-        Clock.schedule_interval(self.update_object, 0.5)
+        Clock.schedule_interval(self.update_object, 0.1)
         Clock.schedule_interval(self.on_point, 0)
 
     def _on_keyboard_closed(self):
@@ -92,8 +92,17 @@ class GameWidget(Widget):
         """
         อัปเดตขนาดและตำแหน่งของวัตถุ (obj) ทุก ๆ 0.5 วินาที
         """
+
         if self.count < len(self.sizes):  # ตรวจสอบให้ count ไม่เกินขอบเขต
-            self.obj_size = self.sizes[self.count]  # ตั้งค่าขนาดใหม่ตาม index
+            # อัปเดตขนาดใหม่ตาม index
+            new_size = self.sizes[self.count]
+
+            # อัปเดตตำแหน่งใหม่ให้สัมพันธ์กับขนาด
+            self.obj_pos[0] += (self.obj_size[0] - new_size[0]) / 2
+            self.obj_pos[1] += (self.obj_size[1] - new_size[1]) / 2
+
+            # ตั้งค่าขนาดใหม่
+            self.obj_size = new_size
             self.count += 1  # เพิ่มตัวนับ
         else:
             self.count = 0  # รีเซ็ตตัวนับ
