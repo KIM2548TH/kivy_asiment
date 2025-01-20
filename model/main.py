@@ -6,7 +6,8 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, NumericProperty
+from kivy.animation import Animation
 import os
 
 kv_path = os.path.join(os.path.dirname(__file__), "../tamplate/main.kv")
@@ -15,9 +16,11 @@ Builder.load_file(kv_path)
 
 class GameWidget(Widget):
     count = 0
+    combo = NumericProperty(0)
     obj_pos = ListProperty([250, 250])
     sizes = [[100, 100], [95, 95], [98, 98], [88, 88], [80, 80], [85, 85]]
     obj_size = ListProperty(sizes[count])
+    combo_font_size = NumericProperty(40)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,7 +30,6 @@ class GameWidget(Widget):
         self._mouse = Window.bind(mouse_pos=self._on_mouse_move)
         self.pressed_keys = set()
 
-        self.combo = 0
         self.game_active = True
 
         Clock.schedule_interval(self.update_object, 0.1)
@@ -63,6 +65,7 @@ class GameWidget(Widget):
             if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
                 print("s onclick!!!!!!!!!!")
                 self.combo += 1
+                self.animate_combo_label()
             else:
                 print("game over")
                 self.end_game()
@@ -71,6 +74,7 @@ class GameWidget(Widget):
             if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
                 print("d onclick!!!!!!!!!!")
                 self.combo += 1
+                self.animate_combo_label()
             else:
                 print("game over")
                 self.end_game()
@@ -82,7 +86,7 @@ class GameWidget(Widget):
     def create_effect(self, pos):
         adjusted_pos = (pos[0] - 10, pos[1] - 10)
         with self.canvas:
-            effect = Rectangle(pos=adjusted_pos, size=(20, 20))
+            effect = Rectangle(pos=adjusted_pos, size=(15, 15))
         Clock.schedule_once(lambda dt: self.remove_effect(effect), 0.1)
 
     def remove_effect(self, effect):
@@ -111,6 +115,13 @@ class GameWidget(Widget):
         self.game_active = False
         self.ids.game_over_label.text = f"GAME OVER\nCombo: {self.combo}"
         self.ids.game_over_label.opacity = 1
+
+    def animate_combo_label(self):
+        # ขยายฟอนต์ชั่วคราว
+        anim = Animation(combo_font_size=60, duration=0.1) + Animation(
+            combo_font_size=40, duration=0.1
+        )
+        anim.start(self)
 
 
 class MyApp(App):

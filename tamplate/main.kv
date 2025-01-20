@@ -8,6 +8,17 @@
             size: root.obj_size
 
     Label:
+        id: combo_label
+        text: str(root.combo)
+        font_size: root.combo_font_size
+        size_hint: None, None
+        size: 150, 50
+        color: 0, 1, 0, 1
+        center_x: root.width / 1.2
+        center_y: root.height / 1.2
+        top: root.height - 50
+
+    Label:
         id: game_over_label
         text: "GAME OVER"
         font_size: "50sp"
