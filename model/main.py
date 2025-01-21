@@ -10,6 +10,9 @@ from kivy.properties import ListProperty, NumericProperty
 from kivy.animation import Animation
 import os
 
+
+from start import start_game
+
 kv_path = os.path.join(os.path.dirname(__file__), "../tamplate/main.kv")
 Builder.load_file(kv_path)
 
@@ -28,9 +31,10 @@ class GameWidget(Widget):
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
         self._mouse = Window.bind(mouse_pos=self._on_mouse_move)
+        self.game_active = False
         self.pressed_keys = set()
 
-        self.game_active = True
+        start_game(self)
 
         Clock.schedule_interval(self.update_object, 0.1)
         Clock.schedule_interval(self.on_point, 0)
@@ -43,6 +47,16 @@ class GameWidget(Widget):
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         print("Key down:", text)
         self.pressed_keys.add(text)
+
+        # เริ่มเกมเมื่อกด R และซ่อน start_label
+        if not self.game_active and text == "r":
+            self.game_active = True
+            print("Game started!")
+            start_game(self)
+
+            # ซ่อน start_label ด้วย Animation
+            anim = Animation(opacity=0, duration=0.5)
+            anim.start(self.ids.start_label)
 
     def _on_key_up(self, keyboard, keycode):
         text = keycode[1]
