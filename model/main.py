@@ -48,15 +48,19 @@ class GameWidget(Widget):
         print("Key down:", text)
         self.pressed_keys.add(text)
 
-        # เริ่มเกมเมื่อกด R และซ่อน start_label
-        if not self.game_active and text == "r":
-            self.game_active = True
-            print("Game started!")
-            start_game(self)
-
-            # ซ่อน start_label ด้วย Animation
-            anim = Animation(opacity=0, duration=0.5)
-            anim.start(self.ids.start_label)
+        if text == "r" and self.game_active is False:
+            if hasattr(self, "center_obj"):
+                if self.is_mouse_inside_object(
+                    self._mouse, (self.center_obj.pos, self.center_obj.size)
+                ):
+                    print("Starting game and removing center_obj...")
+                    self.game_active = True
+                    self.remove_center_object()  # ลบ center_obj
+                    start_game(self)  # เริ่มเกม
+                else:
+                    print("Mouse not inside center_object, cannot start game.")
+            else:
+                print("No center_obj to remove.")
 
     def _on_key_up(self, keyboard, keycode):
         text = keycode[1]
@@ -96,6 +100,27 @@ class GameWidget(Widget):
     def _on_mouse_move(self, window, pos):
         self._mouse = pos
         self.create_effect(self._mouse)
+
+    def create_center_object(self):
+        # คำนวณตำแหน่งให้ตรงกลางหน้าจอ
+        center_x = (self.width - self.obj_size[0]) / 2
+        center_y = (self.height - self.obj_size[1]) / 2
+
+        with self.canvas:
+            self.center_obj = Rectangle(
+                pos=(center_x, center_y),
+                size=self.obj_size,
+            )
+        print("Center object created at position:", (center_x, center_y))
+
+    def remove_center_object(self):
+        if hasattr(self, "center_obj"):  # ตรวจสอบว่า center_obj ถูกสร้างขึ้นแล้วหรือยัง
+            anim = Animation(opacity=0, duration=0.5)  # แอนิเมชันให้ความโปร่งใสเป็น 0
+            anim.bind(
+                on_complete=lambda *args: self.canvas.remove(self.center_obj)
+            )  # ลบออกจาก canvas เมื่อจบแอนิเมชัน
+            anim.start(self.ids.start_label)  # ใช้ start_label เพื่อทำให้แอนิเมชันเกิดขึ้น
+            print("center_obj removed.")
 
     def create_effect(self, pos):
         adjusted_pos = (pos[0] - 10, pos[1] - 10)

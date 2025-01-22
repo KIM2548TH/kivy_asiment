@@ -11,6 +11,7 @@ def start_game(widget):
     widget.obj_pos = [250, 250]
     widget.game_active = False
 
+    widget.create_center_object()
     # ตั้งค่า opacity ให้ข้อความเริ่มต้นแสดงขึ้นมาหากยังไม่เริ่มเกม
     widget.ids.start_label.opacity = 1
 

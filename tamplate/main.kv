@@ -9,6 +9,13 @@
             pos: root.obj_pos  # ใช้ตำแหน่งที่กำหนดใน root.obj_pos
             size: root.obj_size  # ใช้ขนาดที่กำหนดใน root.obj_size
             source: 'object_image.png'  # ใช้รูปภาพสำหรับ object
+        Color:
+            rgba: (1, 1, 1, 1)  # สีของออบเจกต์
+        Rectangle:
+            id: center_obj
+            pos: (self.width - root.obj_size[0]) / 2, (self.height - root.obj_size[1]) / 2
+            size: root.obj_size
+
 
     Label:
         id: combo_label
