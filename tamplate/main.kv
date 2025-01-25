@@ -1,3 +1,28 @@
+ScreenManager:
+    StartScreen:
+    GameScreen:
+
+<StartScreen>:
+    name: "start_screen"
+    FloatLayout:
+        Label:
+            id: start_label
+            text: "Press R on object to Start"
+            font_size: "40sp"
+            size_hint: None, None
+            size: 400, 100
+            center_x: root.width / 2
+            center_y: root.height / 2 + 100
+            opacity: 1
+        # ออกแบบหน้าเริ่มเกม
+
+<GameScreen>:
+    name: "game_screen"
+    GameWidget:
+        id: game_widget
+
+
+
 <GameWidget>:
     game_active: True
 
@@ -13,7 +38,7 @@
             rgba: (1, 1, 1, 1)  # สีของออบเจกต์
         Rectangle:
             id: center_obj
-            pos: (self.width - root.obj_size[0]) / 2, (self.height - root.obj_size[1]) / 2
+            pos: root.obj_pos
             size: root.obj_size
 
 

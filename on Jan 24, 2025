@@ -1,0 +1,65 @@
+[33mcommit b53efb718ef5e2abb623fc0ebd0eaac4d0ef2b25[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Thu Jan 23 19:02:00 2025 +0700
+
+    sort file
+
+[33mcommit ce38fe37a7a45393eda8e3318d67425fdb4dfdbf[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Wed Jan 22 23:53:36 2025 +0700
+
+    update feature start game
+
+[33mcommit e53afa61718a56b312f94fa79d3633799d3bbb48[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Tue Jan 21 23:09:32 2025 +0700
+
+    add start game feature
+
+[33mcommit 009a3420a82bf9986b585169093c110db1354261[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Mon Jan 20 22:14:47 2025 +0700
+
+    add combo counting in eidget
+
+[33mcommit 5f9936b1c441a9a81dadd4cc19f8b54141835f36[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Sun Jan 19 20:19:21 2025 +0700
+
+    update feature update_opject
+
+[33mcommit d709338a74f28f3d366ddb2e135644355ac13f6c[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Sun Jan 19 20:06:18 2025 +0700
+
+    add new feature change size object
+
+[33mcommit 85de732d6be5b5c8a8b516255d4ad6357cce658c[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Sat Jan 18 23:06:29 2025 +0700
+
+    debug pos and size obj no change
+
+[33mcommit 5cf18aeedee9b7618dd06637bd5d7338ab45f3e8[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Sat Jan 18 22:48:45 2025 +0700
+
+    make .py in main make .kv in tamplate
+
+[33mcommit 68b7de3cdb725ad68b2fb6dafc4b5d0558019d45[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Sat Jan 18 21:37:06 2025 +0700
+
+    make game over is game over
+
+[33mcommit 14bc020542cf6828254d22f3ad1f71ca6ca571a1[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Fri Jan 17 22:01:10 2025 +0700
+
+    add game over feature
+
+[33mcommit 5b9d8303d60392bd2a2633513b3188be203a1ad8[m
+Author: KIMBIEW <jitkhon1979@gmail.com>
+Date:   Thu Jan 16 20:48:55 2025 +0700
+
+    init project

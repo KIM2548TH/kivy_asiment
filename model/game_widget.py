@@ -1,10 +1,23 @@
+from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle
 from kivy.clock import Clock
 from kivy.animation import Animation
 from kivy.properties import ListProperty, NumericProperty
 from kivy.core.window import Window
-from start import start_game, create_center_object, remove_center_object
+from start import start_game, object_in_start  # ใช้ object_in_start
+
+
+class StartScreen(Screen):
+    """หน้าจอเริ่มเกม"""
+
+    pass
+
+
+class GameScreen(Screen):
+    """หน้าจอเกมหลัก"""
+
+    pass
 
 
 class GameWidget(Widget):
@@ -24,7 +37,7 @@ class GameWidget(Widget):
         self.game_active = False
         self.pressed_keys = set()
 
-        start_game(self)
+        Clock.schedule_once(lambda dt: start_game(self), 0)  # เรียกฟังก์ชัน start_game
 
         Clock.schedule_interval(self.update_object, 0.1)
         Clock.schedule_interval(self.on_point, 0)
@@ -38,13 +51,17 @@ class GameWidget(Widget):
         self.pressed_keys.add(text)
 
         if text == "r" and self.game_active is False:
-            if hasattr(self, "center_obj"):
+            # เรียกตรวจสอบว่า center_obj อยู่ใน canvas แล้วหรือไม่
+            if self.ids.start_label.opacity == 1:  # ใช้การตรวจสอบแทน
                 if self.is_mouse_inside_object(
-                    self._mouse, (self.center_obj.pos, self.center_obj.size)
+                    self._mouse, (self.obj_pos, self.obj_size)
                 ):
                     self.game_active = True
-                    remove_center_object(self)
-                    start_game(self)
+                    object_in_start.remove_center_object(self)
+                    print("Mouse is inside center_object, start game!")
+                    self.ids.start_label.opacity = 0  # ซ่อนข้อความหลังจากเริ่มเกม
+                    self.game_active = True
+
                 else:
                     print("Mouse not inside center_object, cannot start game.")
             else:
@@ -67,7 +84,6 @@ class GameWidget(Widget):
             return
 
         if "s" in self.pressed_keys:
-
             if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
                 self.combo += 1
                 self.animate_combo_label()
