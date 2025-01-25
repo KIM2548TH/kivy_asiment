@@ -3,17 +3,43 @@ from kivy.graphics import Rectangle
 from kivy.properties import ListProperty
 
 
+from kivy.uix.button import Button
+
+
 def start_game(widget):
     widget.combo = 0
     widget.count = 0
     widget.obj_pos = [250, 250]
     widget.game_active = False
 
-    # สร้าง center object
-    object_in_start.create_center_object(widget)
+    # ซ่อนออบเจกต์
+    # widget.ids.obj.opacity = 0
 
+    # แสดงข้อความเริ่มต้น
     widget.ids.start_label.opacity = 1
     widget.ids.start_label.text = "Press R to Start"
+
+    # เพิ่มปุ่ม "ทดลองเล่น" และ "เลือกเพลง"
+    if not hasattr(widget, "try_button") and not hasattr(widget, "song_button"):
+        try_button = Button(
+            text="ทดลองเล่น",
+            size_hint=(0.3, 0.1),
+            pos_hint={"center_x": 0.3, "center_y": 0.5},
+        )
+        try_button.bind(on_press=lambda *args: widget.start_trial())
+
+        song_button = Button(
+            text="เลือกเพลง",
+            size_hint=(0.3, 0.1),
+            pos_hint={"center_x": 0.7, "center_y": 0.5},
+        )
+        song_button.bind(on_press=lambda *args: widget.select_song())
+
+        widget.add_widget(try_button)
+        widget.add_widget(song_button)
+
+        widget.try_button = try_button
+        widget.song_button = song_button
 
 
 class object_in_start:

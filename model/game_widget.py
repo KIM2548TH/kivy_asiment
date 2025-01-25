@@ -124,3 +124,24 @@ class GameWidget(Widget):
             combo_font_size=40, duration=0.1
         )
         anim.start(self)
+
+    def start_trial(self):
+        # ฟังก์ชันเริ่มต้นโหมดทดลองเล่น
+        self.clear_menu_buttons()
+        print("Starting trial mode...")
+        # คุณสามารถเพิ่มโค้ดแสดงออบเจกต์ใหม่ที่นี่
+
+    def select_song(self):
+        # ฟังก์ชันเลือกเพลง
+        self.clear_menu_buttons()
+        print("Opening song selection menu...")
+        # เพิ่มหน้าต่างเลือกเพลง
+
+    def clear_menu_buttons(self):
+        # ลบปุ่มเมนูออก
+        if hasattr(self, "try_button"):
+            self.remove_widget(self.try_button)
+            del self.try_button
+        if hasattr(self, "song_button"):
+            self.remove_widget(self.song_button)
+            del self.song_button
