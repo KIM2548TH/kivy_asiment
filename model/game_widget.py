@@ -265,6 +265,11 @@ class GameWidget(Widget):
         self.ids.game_over_label.text = f"GAME OVER\nCombo: {self.combo}"
         self.ids.game_over_label.opacity = 1
 
+        # รีเซ็ตตำแหน่งของเพลงกลับไปที่จุดเริ่มต้น
+        self.music_logic._song_time = 0  # เริ่มต้นเพลงใหม่จากเวลา 0
+        self.music_logic.start_music()  # เริ่มเล่นเพลงใหม่
+        print("Game Over! Restarting song.")
+
     def animate_combo_label(self):
         """
         สร้างอนิเมชันสำหรับคอมโบ
