@@ -1,10 +1,11 @@
+from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle
 from kivy.clock import Clock
 from kivy.animation import Animation
 from kivy.properties import ListProperty, NumericProperty
 from kivy.core.window import Window
-from start import start_game, object_in_start  # ใช้ object_in_start
+from start import new_game, object_in_start  # ใช้ object_in_start
 
 
 class GameWidget(Widget):
@@ -24,7 +25,9 @@ class GameWidget(Widget):
         self.game_active = False
         self.pressed_keys = set()
 
-        start_game(self)  # เรียกฟังก์ชัน start_game
+        Clock.schedule_once(
+            lambda dt: new_game.start_game(self), 0
+        )  # เรียกฟังก์ชัน start_game
 
         Clock.schedule_interval(self.update_object, 0.1)
         Clock.schedule_interval(self.on_point, 0)
@@ -39,19 +42,23 @@ class GameWidget(Widget):
 
         if text == "r" and self.game_active is False:
             # เรียกตรวจสอบว่า center_obj อยู่ใน canvas แล้วหรือไม่
+
+            if self.ids.game_over_label.opacity == 1:  # ถ้ามี game over label ปรากฏอยู่
+                new_game.reset_game(self)  # รีเซ็ตเกมก่อน
+                self.ids.game_over_label.text = ""
+
+                print("Resetting the game!")
+
             if self.ids.start_label.opacity == 1:  # ใช้การตรวจสอบแทน
                 if self.is_mouse_inside_object(
                     self._mouse, (self.obj_pos, self.obj_size)
                 ):
                     self.game_active = True
-                    object_in_start.remove_center_object(
-                        self
-                    )  # เรียก remove_center_object
-                    print(
-                        "Mouse is inside center_object,start game!!!!!!!!!!!!!!!!!!!!"
-                    )
-                    start_game(self)
+                    object_in_start.remove_center_object(self)
+                    print("Mouse is inside center_object, start game!")
+                    self.ids.start_label.opacity = 0  # ซ่อนข้อความหลังจากเริ่มเกม
                     self.game_active = True
+
                 else:
                     print("Mouse not inside center_object, cannot start game.")
             else:
@@ -124,24 +131,3 @@ class GameWidget(Widget):
             combo_font_size=40, duration=0.1
         )
         anim.start(self)
-
-    def start_trial(self):
-        # ฟังก์ชันเริ่มต้นโหมดทดลองเล่น
-        self.clear_menu_buttons()
-        print("Starting trial mode...")
-        # คุณสามารถเพิ่มโค้ดแสดงออบเจกต์ใหม่ที่นี่
-
-    def select_song(self):
-        # ฟังก์ชันเลือกเพลง
-        self.clear_menu_buttons()
-        print("Opening song selection menu...")
-        # เพิ่มหน้าต่างเลือกเพลง
-
-    def clear_menu_buttons(self):
-        # ลบปุ่มเมนูออก
-        if hasattr(self, "try_button"):
-            self.remove_widget(self.try_button)
-            del self.try_button
-        if hasattr(self, "song_button"):
-            self.remove_widget(self.song_button)
-            del self.song_button
