@@ -18,10 +18,16 @@ class GameWidget(Widget):
     combo_font_size = NumericProperty(40)
 
     song_sequence = [
-        {"time": 1, "position": [250, 250]},  # ตำแหน่งสำหรับเวลา
-        {"time": 3, "position": [300, 300]},
-        {"time": 5, "position": [350, 200]},
-        {"time": 7, "position": [250, 150]},  # ลำดับตำแหน่งในจังหวะเพลง
+        {"time": 1, "position": [250, 250]},  # จังหวะแรก
+        {"time": 2, "position": [300, 300]},  # จังหวะที่สอง
+        {"time": 3, "position": [350, 200]},  # จังหวะที่สาม
+        {"time": 4, "position": [250, 150]},  # จังหวะที่สี่
+        {"time": 5, "position": [250, 250]},  # จังหวะที่ห้า
+        {"time": 6, "position": [300, 300]},  # จังหวะที่หก
+        {"time": 7, "position": [350, 200]},  # จังหวะที่เจ็ด
+        {"time": 8, "position": [250, 150]},  # จังหวะที่แปด
+        {"time": 9, "position": [250, 250]},  # จังหวะที่เก้า
+        {"time": 10, "position": [300, 300]},  # จังหวะที่สิบ
     ]
 
     def __init__(self, **kwargs):
@@ -41,18 +47,16 @@ class GameWidget(Widget):
         self.music_logic = MusicLogic(self, self.song_sequence)
 
     def move_object(self):
-        # โค้ดที่ทำให้การเคลื่อนที่ของออบเจกต์เกิดขึ้น
-        if self.song_sequence:
-            # เช็คว่าเพลงกำลังเล่นถึงช่วงเวลาไหนแล้ว และย้ายออบเจกต์
-            for song in self.song_sequence:
-                if (
-                    int(self.music_logic._song_time) == song["time"]
-                ):  # หากเวลาของเพลงตรงกับเวลาที่กำหนดใน song_sequence
-                    self.obj_pos = song[
-                        "position"
-                    ]  # เปลี่ยนตำแหน่งออบเจกต์ตามตำแหน่งใน song_sequence
-                    print(f"Object moved to: {self.obj_pos}")
-                    break
+        if not self.song_sequence:
+            return
+
+        current_time = int(self.music_logic._song_time)
+
+        for song in self.song_sequence:
+            if current_time == song["time"]:  # เช็คว่าเวลาในเพลงตรงกับเวลาที่ต้องการ
+                self.obj_pos = song["position"]  # เปลี่ยนตำแหน่ง
+                print(f"Object moved to: {self.obj_pos}")
+                break
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
@@ -93,34 +97,42 @@ class GameWidget(Widget):
         return obj_x <= x <= obj_x + obj_width and obj_y <= y <= obj_y + obj_height
 
     def on_point(self, dt):
+        """
+        ฟังก์ชั่นที่ใช้ในการตรวจจับการคลิก
+        """
         if not self.game_active:
             return
 
-        if "s" in self.pressed_keys:
+        if "s" in self.pressed_keys or "d" in self.pressed_keys:
+            key_pressed = "s" if "s" in self.pressed_keys else "d"
             if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
                 self.combo += 1
                 self.animate_combo_label()
-                print("s on click")
-
+                print(f"Clicked on {key_pressed}, combo: {self.combo}")
             else:
-                print("Missed s")
+                print(f"Missed {key_pressed}")
                 self.end_game()
 
-        if "d" in self.pressed_keys:
-            if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
-                self.combo += 1
-                self.animate_combo_label()
-                print("d on click")
-
-            else:
-                print("Missed d")
-                self.end_game()
+    def is_mouse_inside_object(self, mouse_pos, obj):
+        """
+        ตรวจจับตำแหน่งของเมาส์ว่าคลิกในออบเจกต์หรือไม่
+        """
+        x, y = mouse_pos
+        obj_x, obj_y = obj[0]
+        obj_width, obj_height = obj[1]
+        return obj_x <= x <= obj_x + obj_width and obj_y <= y <= obj_y + obj_height
 
     def _on_mouse_move(self, window, pos):
+        """
+        เมื่อเมาส์ขยับ
+        """
         self._mouse = pos
         self.create_effect(self._mouse)
 
     def create_effect(self, pos):
+        """
+        สร้างเอฟเฟ็กต์เมื่อเมาส์ขยับ
+        """
         adjusted_pos = (pos[0] - 10, pos[1] - 10)
         with self.canvas:
             effect = Rectangle(pos=adjusted_pos, size=(15, 15))
@@ -130,6 +142,9 @@ class GameWidget(Widget):
         self.canvas.remove(effect)
 
     def update_object(self, dt):
+        """
+        อัพเดตขนาดของออบเจกต์ตามเวลาที่กำหนด
+        """
         if self.count < len(self.sizes):
             new_size = self.sizes[self.count]
             self.obj_pos[0] += (self.obj_size[0] - new_size[0]) / 2
@@ -140,11 +155,17 @@ class GameWidget(Widget):
             self.count = 0
 
     def end_game(self):
+        """
+        ฟังก์ชั่นจบเกม
+        """
         self.game_active = False
         self.ids.game_over_label.text = f"GAME OVER\nCombo: {self.combo}"
         self.ids.game_over_label.opacity = 1
 
     def animate_combo_label(self):
+        """
+        สร้างอนิเมชันสำหรับคอมโบ
+        """
         anim = Animation(combo_font_size=60, duration=0.1) + Animation(
             combo_font_size=40, duration=0.1
         )
