@@ -40,6 +40,20 @@ class GameWidget(Widget):
         # เริ่มใช้งาน MusicLogic
         self.music_logic = MusicLogic(self, self.song_sequence)
 
+    def move_object(self):
+        # โค้ดที่ทำให้การเคลื่อนที่ของออบเจกต์เกิดขึ้น
+        if self.song_sequence:
+            # เช็คว่าเพลงกำลังเล่นถึงช่วงเวลาไหนแล้ว และย้ายออบเจกต์
+            for song in self.song_sequence:
+                if (
+                    int(self.music_logic._song_time) == song["time"]
+                ):  # หากเวลาของเพลงตรงกับเวลาที่กำหนดใน song_sequence
+                    self.obj_pos = song[
+                        "position"
+                    ]  # เปลี่ยนตำแหน่งออบเจกต์ตามตำแหน่งใน song_sequence
+                    print(f"Object moved to: {self.obj_pos}")
+                    break
+
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
         self._keyboard.unbind(on_key_up=self._on_key_up)
