@@ -8,7 +8,7 @@ class MusicLogic:
         self.song_sequence = song_sequence  # เก็บ sequence ของเพลง
         self.music_file = "assets/music/music.mp3"  # เพลงที่ต้องการ
         self.music = SoundLoader.load(self.music_file)  # โหลดเพลง
-        self.beat_interval = 2  # ทุก 2 วินาที ถือว่าเป็นจังหวะใหม่ (สามารถปรับได้)
+        self.beat_interval = 1  # ทุก 2 วินาที ถือว่าเป็นจังหวะใหม่ (สามารถปรับได้)
         self.is_playing = False
         self._song_time = 0.0  # เวลาในเพลง
         self.combo = 0  # คอมโบของผู้เล่น
