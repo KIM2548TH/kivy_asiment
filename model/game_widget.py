@@ -5,19 +5,7 @@ from kivy.clock import Clock
 from kivy.animation import Animation
 from kivy.properties import ListProperty, NumericProperty
 from kivy.core.window import Window
-from start import start_game, object_in_start  # ใช้ object_in_start
-
-
-class StartScreen(Screen):
-    """หน้าจอเริ่มเกม"""
-
-    pass
-
-
-class GameScreen(Screen):
-    """หน้าจอเกมหลัก"""
-
-    pass
+from start import new_game, object_in_start  # ใช้ object_in_start
 
 
 class GameWidget(Widget):
@@ -37,7 +25,9 @@ class GameWidget(Widget):
         self.game_active = False
         self.pressed_keys = set()
 
-        Clock.schedule_once(lambda dt: start_game(self), 0)  # เรียกฟังก์ชัน start_game
+        Clock.schedule_once(
+            lambda dt: new_game.start_game(self), 0
+        )  # เรียกฟังก์ชัน start_game
 
         Clock.schedule_interval(self.update_object, 0.1)
         Clock.schedule_interval(self.on_point, 0)
@@ -52,6 +42,13 @@ class GameWidget(Widget):
 
         if text == "r" and self.game_active is False:
             # เรียกตรวจสอบว่า center_obj อยู่ใน canvas แล้วหรือไม่
+
+            if self.ids.game_over_label.opacity == 1:  # ถ้ามี game over label ปรากฏอยู่
+                new_game.reset_game(self)  # รีเซ็ตเกมก่อน
+                self.ids.game_over_label.text = ""
+
+                print("Resetting the game!")
+
             if self.ids.start_label.opacity == 1:  # ใช้การตรวจสอบแทน
                 if self.is_mouse_inside_object(
                     self._mouse, (self.obj_pos, self.obj_size)
