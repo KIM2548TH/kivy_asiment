@@ -138,6 +138,7 @@ class GameWidget(Widget):
 
         # เริ่มใช้งาน MusicLogic
         self.music_logic = MusicLogic(self, self.song_sequence)
+        self.obj_clicked = False
 
     def move_object(self):
         if not self.song_sequence:
@@ -151,6 +152,7 @@ class GameWidget(Widget):
             ):  # เปรียบเทียบแบบ float
                 self.obj_pos = song["position"]
                 print(f"Object moved to: {self.obj_pos}")
+                self.obj_clicked = False
                 break
 
     def _on_keyboard_closed(self):
@@ -198,14 +200,20 @@ class GameWidget(Widget):
         if not self.game_active:
             return
 
-        if "s" in self.pressed_keys or "d" in self.pressed_keys:
-            key_pressed = "s" if "s" in self.pressed_keys else "d"
-            if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
+        if "d" in self.pressed_keys:
+            if (
+                self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size))
+                and not self.obj_clicked
+            ):
+                # กดถูก
                 self.combo += 1
+                self.obj_clicked = True  # กดถูกแล้วออบเจกต์จะหายไป
                 self.animate_combo_label()
-                print(f"Clicked on {key_pressed}, combo: {self.combo}")
+                print(f"Clicked on 'd', combo: {self.combo}")
+                self.move_object()  # อัพเดตตำแหน่งของออบเจกต์
             else:
-                print(f"Missed {key_pressed}")
+                # กดผิด
+                print("Missed 'd' or clicked on the wrong object")
                 self.end_game()
 
     def is_mouse_inside_object(self, mouse_pos, obj):
