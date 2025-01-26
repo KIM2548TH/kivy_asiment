@@ -18,10 +18,10 @@ class GameWidget(Widget):
     combo_font_size = NumericProperty(40)
 
     song_sequence = [
-        {"time": 1, "position": [250, 250]},  # position สำหรับเวลา
+        {"time": 1, "position": [250, 250]},  # ตำแหน่งสำหรับเวลา
         {"time": 3, "position": [300, 300]},
         {"time": 5, "position": [350, 200]},
-        {"time": 7, "position": [250, 150]},  # นี้คือลำดับของตำแหน่ง
+        {"time": 7, "position": [250, 150]},  # ลำดับตำแหน่งในจังหวะเพลง
     ]
 
     def __init__(self, **kwargs):
@@ -33,12 +33,12 @@ class GameWidget(Widget):
         self.game_active = False
         self.pressed_keys = set()
 
-        Clock.schedule_once(
-            lambda dt: new_game.start_game(self), 0
-        )  # เรียกฟังก์ชัน start_game
-
+        Clock.schedule_once(lambda dt: new_game.start_game(self), 0)
         Clock.schedule_interval(self.update_object, 0.1)
         Clock.schedule_interval(self.on_point, 0)
+
+        # เริ่มใช้งาน MusicLogic
+        self.music_logic = MusicLogic(self, self.song_sequence)
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
@@ -49,30 +49,23 @@ class GameWidget(Widget):
         self.pressed_keys.add(text)
 
         if text == "r" and not self.game_active:
-            # เรียกตรวจสอบว่า center_obj อยู่ใน canvas แล้วหรือไม่
-            if self.ids.game_over_label.opacity == 1:  # ถ้ามี game over label ปรากฏอยู่
-                new_game.reset_game(self)  # รีเซ็ตเกมก่อน
+            if self.ids.game_over_label.opacity == 1:  # หากมี game over ปรากฏ
+                new_game.reset_game(self)  # รีเซ็ตเกม
                 self.ids.game_over_label.text = ""
                 print("Resetting the game!")
 
-            if self.ids.start_label.opacity == 1:  # ใช้การตรวจสอบแทน
+            if self.ids.start_label.opacity == 1:
                 if self.is_mouse_inside_object(
                     self._mouse, (self.obj_pos, self.obj_size)
                 ):
-                    # ตรวจสอบว่าเมาส์อยู่ในออบเจกต์แรกแล้ว
                     self.game_active = True
                     object_in_start.remove_center_object(self)
-                    self.ids.start_label.opacity = 0  # ซ่อนข้อความหลังจากเริ่มเกม
-
+                    self.ids.start_label.opacity = 0
                     print("Mouse is inside center_object, start game!")
-
-                    # เรียกใช้งาน music_logic เพื่อเริ่มเกม
-                    self.music_logic = MusicLogic(self, self.song_sequence)
+                    self.music_logic.start_music()  # เริ่มเล่นเพลง
 
                 else:
                     print("Mouse not inside center_object, cannot start game.")
-            else:
-                print("No center_obj to remove.")
 
     def _on_key_up(self, keyboard, keycode):
         text = keycode[1]
@@ -83,7 +76,6 @@ class GameWidget(Widget):
         x, y = mouse_pos
         obj_x, obj_y = obj[0]
         obj_width, obj_height = obj[1]
-
         return obj_x <= x <= obj_x + obj_width and obj_y <= y <= obj_y + obj_height
 
     def on_point(self, dt):
@@ -94,19 +86,21 @@ class GameWidget(Widget):
             if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
                 self.combo += 1
                 self.animate_combo_label()
-                print("s on clickkkkkkkkkkkkk")
+                print("s on click")
+
             else:
-                print("s")
+                print("Missed s")
                 self.end_game()
 
         if "d" in self.pressed_keys:
             if self.is_mouse_inside_object(self._mouse, (self.obj_pos, self.obj_size)):
                 self.combo += 1
                 self.animate_combo_label()
-                print("d on clickkkkkkkkkkkkk")
+                print("d on click")
+
             else:
+                print("Missed d")
                 self.end_game()
-                print("d")
 
     def _on_mouse_move(self, window, pos):
         self._mouse = pos
