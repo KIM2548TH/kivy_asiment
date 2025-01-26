@@ -6,6 +6,7 @@ from kivy.animation import Animation
 from kivy.properties import ListProperty, NumericProperty
 from kivy.core.window import Window
 from start import new_game, object_in_start  # ใช้ object_in_start
+from music_logic import MusicLogic
 
 
 class GameWidget(Widget):
@@ -15,6 +16,13 @@ class GameWidget(Widget):
     sizes = [[100, 100], [95, 95], [98, 98], [88, 88], [80, 80], [85, 85]]
     obj_size = ListProperty(sizes[count])
     combo_font_size = NumericProperty(40)
+
+    song_sequence = [
+        {"time": 1, "position": [250, 250]},  # position สำหรับเวลา
+        {"time": 3, "position": [300, 300]},
+        {"time": 5, "position": [350, 200]},
+        {"time": 7, "position": [250, 150]},  # นี้คือลำดับของตำแหน่ง
+    ]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -40,24 +48,26 @@ class GameWidget(Widget):
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         self.pressed_keys.add(text)
 
-        if text == "r" and self.game_active is False:
+        if text == "r" and not self.game_active:
             # เรียกตรวจสอบว่า center_obj อยู่ใน canvas แล้วหรือไม่
-
             if self.ids.game_over_label.opacity == 1:  # ถ้ามี game over label ปรากฏอยู่
                 new_game.reset_game(self)  # รีเซ็ตเกมก่อน
                 self.ids.game_over_label.text = ""
-
                 print("Resetting the game!")
 
             if self.ids.start_label.opacity == 1:  # ใช้การตรวจสอบแทน
                 if self.is_mouse_inside_object(
                     self._mouse, (self.obj_pos, self.obj_size)
                 ):
+                    # ตรวจสอบว่าเมาส์อยู่ในออบเจกต์แรกแล้ว
                     self.game_active = True
                     object_in_start.remove_center_object(self)
-                    print("Mouse is inside center_object, start game!")
                     self.ids.start_label.opacity = 0  # ซ่อนข้อความหลังจากเริ่มเกม
-                    self.game_active = True
+
+                    print("Mouse is inside center_object, start game!")
+
+                    # เรียกใช้งาน music_logic เพื่อเริ่มเกม
+                    self.music_logic = MusicLogic(self, self.song_sequence)
 
                 else:
                     print("Mouse not inside center_object, cannot start game.")
